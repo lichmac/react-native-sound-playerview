@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Image, Text, Slider, TouchableOpacity, Platform, Alert} from 'react-native';
+import { View, Image, Text, Slider, TouchableOpacity, Platform } from 'react-native';
 
 import Sound from 'react-native-sound';
 
@@ -14,6 +14,8 @@ export default class PlayerScreen extends React.Component{
     constructor(){
         super();
         this.state = {
+            inited: false,
+            loaded: false,
             playState:'paused', //playing, paused
             playSeconds:0,
             duration:0
@@ -22,8 +24,10 @@ export default class PlayerScreen extends React.Component{
     }
 
     componentDidMount(){
-        this.play();
-        
+        this.initSound();
+        if (this.props.onLoadStart) {
+            this.props.onLoadStart();
+        }
         this.timeout = setInterval(() => {
             if(this.sound && this.sound.isLoaded() && this.state.playState == 'playing' && !this.sliderEditing){
                 this.sound.getCurrentTime((seconds, isPlaying) => {
@@ -55,33 +59,43 @@ export default class PlayerScreen extends React.Component{
         }
     }
 
+    initSound = () => {
+        const filepath = this.props.filepath;
+        if (__DEV__) console.log('[Play]', filepath);
+        this.sound = new Sound(filepath, '', (error) => {
+            if (error) {
+                if (this.props.onErrorLoad) {
+                    this.props.onErrorLoad();
+                }
+                this.setState({playState:'paused', inited: false});
+            } else {
+                this.sound.setCategory('Playback');
+                this.setState({inited: true, loaded: this.sound.isLoaded(), duration:this.sound.getDuration()});
+                if (this.props.onLoad) {
+                  this.props.onLoad();
+                }
+            }
+        });    
+    }
+
     play = async () => {
         if(this.sound){
             this.sound.play(this.playComplete);
             this.setState({playState:'playing'});
-        }else{
-            const filepath = this.props.filepath;
-            console.log('[Play]', filepath);
-    
-            this.sound = new Sound(filepath, '', (error) => {
-                if (error) {
-                    console.log('failed to load the sound', error);
-                    Alert.alert('Notice', 'audio file error. (Error code : 1)');
-                    this.setState({playState:'paused'});
-                }else{
-                    this.setState({playState:'playing', duration:this.sound.getDuration()});
-                    this.sound.play(this.playComplete);
-                }
-            });    
+        } else {
+           this.initSound();
         }
     }
+
     playComplete = (success) => {
         if(this.sound){
             if (success) {
-                console.log('successfully finished playing');
+                if (__DEV__) console.log('successfully finished playing');
             } else {
-                console.log('playback failed due to audio decoding errors');
-                Alert.alert('Notice', 'audio file error. (Error code : 2)');
+                if (__DEV__) console.log('playback failed due to audio decoding errors');
+                if (this.props.onErrorComplete) {
+                    this.props.onErrorComplete();
+                }
             }
             this.setState({playState:'paused', playSeconds:0});
             this.sound.setCurrentTime(0);
@@ -148,10 +162,7 @@ export default class PlayerScreen extends React.Component{
                     <Text style={{color:'white', alignSelf:'center'}}>{currentTimeString}</Text>
                     <Slider
                         onTouchStart={this.onSliderEditStart}
-                        // onTouchMove={() => console.log('onTouchMove')}
                         onTouchEnd={this.onSliderEditEnd}
-                        // onTouchEndCapture={() => console.log('onTouchEndCapture')}
-                        // onTouchCancel={() => console.log('onTouchCancel')}
                         onValueChange={this.onSliderEditing}
                         value={this.state.playSeconds} maximumValue={this.state.duration} maximumTrackTintColor='gray' minimumTrackTintColor='white' thumbTintColor='white' 
                         style={{flex:1, alignSelf:'center', marginHorizontal:Platform.select({ios:5})}}/>
