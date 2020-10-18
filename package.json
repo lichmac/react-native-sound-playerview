@@ -20,7 +20,7 @@
   "author": "Bright Lee <benevbright@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "react-native-sound": "*"
+    
   },
   "bugs": {
     "url": "https://github.com/benevbright/react-native-sound-playerview/issues"
