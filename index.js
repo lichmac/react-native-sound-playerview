@@ -143,42 +143,43 @@ export default class PlayerScreen extends React.Component {
 
         const currentTimeString = this.getAudioTimeString(this.state.playSeconds);
         const durationString = this.getAudioTimeString(this.state.duration);
+        const {backgroundColor, tintColor, speakerColor} = this.props;
 
         return (
-            <View style={{flex: 1, justifyContent: 'center', backgroundColor: 'black'}}>
-                <Image source={img_speaker} style={{width: 150, height: 150, marginBottom: 15, alignSelf: 'center'}}/>
+            <View style={{flex: 1, justifyContent: 'center', backgroundColor: backgroundColor || 'black'}}>
+                <Image source={img_speaker} style={{width: 150, height: 150, marginBottom: 15, alignSelf: 'center', tintColor: speakerColor || 'gray'}}/>
                 <View style={{flexDirection: 'row', justifyContent: 'center', marginVertical: 15}}>
                     <TouchableOpacity onPress={this.jumpPrev15Seconds} style={{justifyContent: 'center'}}>
-                        <Image source={img_playjumpleft} style={{width: 30, height: 30}}/>
+                        <Image source={img_playjumpleft} style={{width: 30, height: 30, tintColor: tintColor || 'white' }}/>
                         <Text style={{
                             position: 'absolute',
                             alignSelf: 'center',
                             marginTop: 1,
-                            color: 'white',
+                            color: tintColor || 'white',
                             fontSize: 12
                         }}>15</Text>
                     </TouchableOpacity>
                     {this.state.playState === 'playing' &&
                     <TouchableOpacity onPress={this.pause} style={{marginHorizontal: 20}}>
-                        <Image source={img_pause} style={{width: 30, height: 30}}/>
+                        <Image source={img_pause} style={{width: 30, height: 30, tintColor: tintColor || 'white'}}/>
                     </TouchableOpacity>}
                     {this.state.playState === 'paused' &&
                     <TouchableOpacity onPress={this.play} style={{marginHorizontal: 20}}>
-                        <Image source={img_play} style={{width: 30, height: 30}}/>
+                        <Image source={img_play} style={{width: 30, height: 30, tintColor: tintColor || 'white'}}/>
                     </TouchableOpacity>}
                     <TouchableOpacity onPress={this.jumpNext15Seconds} style={{justifyContent: 'center'}}>
-                        <Image source={img_playjumpright} style={{width: 30, height: 30}}/>
+                        <Image source={img_playjumpright} style={{width: 30, height: 30, tintColor: tintColor || 'white'}}/>
                         <Text style={{
                             position: 'absolute',
                             alignSelf: 'center',
                             marginTop: 1,
-                            color: 'white',
+                            color: tintColor || 'white',
                             fontSize: 12
                         }}>15</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={{marginVertical: 15, marginHorizontal: 15, flexDirection: 'row'}}>
-                    <Text style={{color: 'white', alignSelf: 'center'}}>{currentTimeString}</Text>
+                    <Text style={{color: tintColor || 'white', alignSelf: 'center'}}>{currentTimeString}</Text>
                     <Slider
                         onTouchStart={this.onSliderEditStart}
                         onTouchEnd={this.onSliderEditEnd}
@@ -186,10 +187,10 @@ export default class PlayerScreen extends React.Component {
                         value={this.state.playSeconds}
                         maximumValue={this.state.duration}
                         maximumTrackTintColor='gray'
-                        minimumTrackTintColor='white'
-                        thumbTintColor='white'
+                        minimumTrackTintColor={tintColor || 'white'}
+                        thumbTintColor={tintColor || 'white'}
                         style={{flex: 1, alignSelf: 'center', marginHorizontal: Platform.select({ios: 5})}}/>
-                    <Text style={{color: 'white', alignSelf: 'center'}}>{durationString}</Text>
+                    <Text style={{color: tintColor || 'white', alignSelf: 'center'}}>{durationString}</Text>
                 </View>
             </View>
         )
