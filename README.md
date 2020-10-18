@@ -6,10 +6,17 @@ audio player view for iOS/Android using with [react-native-sound](https://github
 
 <img src="https://github.com/benevbright/react-native-sound-playerview/blob/master/docs/demo.gif?raw=true">
 
+## Install
 
-## Getting started
+```shell
+npm i --save git+https://github.com/lichmac/react-native-sound-playerview.git
+```
 
-`$ npm install react-native-sound-playerview`
+Then install the dependencies
+
+```shell
+npm install @react-native-community/slider --save
+npm install react-native-sound --save
 
 ### Step 1. Register Screen with `react-navigation`
 
